@@ -75,15 +75,10 @@ const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
               }}
             >
               <div className="flex flex-col items-center space-y-2">
-                <img 
-                  src={question.images[index]} 
-                  alt={answer}
-                  className="w-full h-24 object-cover rounded-md"
-                  onError={(e) => {
-                    e.target.src = `https://via.placeholder.com/200x150/333/fff?text=${encodeURIComponent(answer)}`;
-                  }}
-                  loading="eager"
-                />
+                <div className="w-full h-24 bg-gradient-to-br from-gray-700 to-gray-800 rounded-md flex flex-col items-center justify-center">
+                  <div className="text-4xl mb-1">{question.emojis[index]}</div>
+                  <div className="text-xs text-gray-300">{answer}</div>
+                </div>
                 <div className="text-center">
                   <span className="font-medium">{String.fromCharCode(65 + index)}.</span> {answer}
                 </div>
