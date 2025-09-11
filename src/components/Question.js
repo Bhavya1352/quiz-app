@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
 
   const handleAnswerSelect = (answer) => {
     setSelectedAnswer(answer);
@@ -10,12 +12,19 @@ const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
 
   const handleNext = () => {
     if (selectedAnswer) {
-      setIsAnimating(true);
+      const correct = selectedAnswer === question.correctAnswer;
+      setIsCorrect(correct);
+      setShowFeedback(true);
+      
       setTimeout(() => {
-        onAnswer(selectedAnswer);
-        setSelectedAnswer(null);
-        setIsAnimating(false);
-      }, 300);
+        setShowFeedback(false);
+        setIsAnimating(true);
+        setTimeout(() => {
+          onAnswer(selectedAnswer);
+          setSelectedAnswer(null);
+          setIsAnimating(false);
+        }, 300);
+      }, 2000);
     }
   };
 
@@ -41,6 +50,19 @@ const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
 
   return (
     <div className={`w-full max-w-2xl mx-auto slide-in ${isAnimating ? 'opacity-50' : ''}`}>
+      {showFeedback && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className={`text-center p-8 rounded-2xl ${isCorrect ? 'bg-green-900' : 'bg-red-900'} border-4 ${isCorrect ? 'border-green-400' : 'border-red-400'} animate-bounce`}>
+            <div className="text-6xl mb-4">{isCorrect ? '🎉' : '😔'}</div>
+            <h2 className={`text-3xl font-bold ${isCorrect ? 'text-green-400' : 'text-red-400'} mb-2`}>
+              {isCorrect ? 'EXCELLENT!' : 'BETTER LUCK NEXT TIME!'}
+            </h2>
+            <p className="text-white text-lg">
+              {isCorrect ? 'Perfect answer! 🌟' : `Correct answer: ${question.correctAnswer}`}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="bg-gray-900 bg-opacity-80 backdrop-blur-sm p-8 rounded-2xl neon-glow">
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
@@ -57,7 +79,19 @@ const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
               ></div>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-8">{question.question}</h2>
+          {question.image && (
+            <div className="mb-6 flex justify-center">
+              <img 
+                src={question.image} 
+                alt="Question visual" 
+                className="w-48 h-32 object-cover rounded-lg border border-gray-600"
+              />
+            </div>
+          )}
+          <div className="flex items-center justify-center mb-6">
+            {question.emoji && <span className="text-4xl mr-4">{question.emoji}</span>}
+            <h2 className="text-2xl font-bold text-white" dangerouslySetInnerHTML={{ __html: question.question }}></h2>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -74,32 +108,24 @@ const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
                 boxShadow: selectedAnswer === answer ? `0 0 20px ${colors.primary}` : 'none'
               }}
             >
-              <div className="flex flex-col items-center space-y-2">
-                <div className="w-full h-24 bg-gradient-to-br from-gray-700 to-gray-800 rounded-md flex flex-col items-center justify-center">
-                  <div className="text-4xl mb-1">{question.emojis[index]}</div>
-                  <div className="text-xs text-gray-300">{answer}</div>
-                </div>
-                <div className="text-center">
-                  <span className="font-medium">{String.fromCharCode(65 + index)}.</span> {answer}
-                </div>
-              </div>
+              <span className="font-medium">{String.fromCharCode(65 + index)}.</span> <span dangerouslySetInnerHTML={{ __html: answer }}></span>
             </button>
           ))}
         </div>
 
         <button
           onClick={handleNext}
-          disabled={!selectedAnswer}
+          disabled={!selectedAnswer || showFeedback}
           className={`w-full py-4 px-8 rounded-lg font-bold text-lg transition-all duration-300 ${
-            selectedAnswer
+            selectedAnswer && !showFeedback
               ? `bg-transparent ${colors.text} ${colors.border} hover:text-white`
               : 'bg-gray-700 text-gray-500 cursor-not-allowed'
           }`}
           style={{
-            boxShadow: selectedAnswer ? `0 0 20px ${colors.primary}` : 'none'
+            boxShadow: selectedAnswer && !showFeedback ? `0 0 20px ${colors.primary}` : 'none'
           }}
         >
-          {questionNumber === totalQuestions ? 'FINISH QUIZ' : 'NEXT QUESTION'}
+          {showFeedback ? 'PROCESSING...' : (questionNumber === totalQuestions ? 'FINISH QUIZ' : 'NEXT QUESTION')}
         </button>
       </div>
     </div>

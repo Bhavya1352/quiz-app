@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { quizData } from '../mock-data';
 import Question from './Question';
 import Results from './Results';
+import { commonQuestions } from '../data/questions';
 
 const Quiz = () => {
   const [questions, setQuestions] = useState([]);
@@ -9,10 +9,22 @@ const Quiz = () => {
   const [answers, setAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchQuestions = async () => {
+    setLoading(true);
+    const shuffledQuestions = [...commonQuestions]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+    setQuestions(shuffledQuestions);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    setQuestions(quizData.questions);
-  }, []);
+    if (quizStarted) {
+      fetchQuestions();
+    }
+  }, [quizStarted]);
 
   const handleAnswer = (answer) => {
     const newAnswers = [...answers, answer];
@@ -30,6 +42,7 @@ const Quiz = () => {
     setAnswers([]);
     setShowResults(false);
     setQuizStarted(false);
+    fetchQuestions();
   };
 
   if (!quizStarted) {
