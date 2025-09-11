@@ -79,17 +79,9 @@ const Question = ({ question, questionNumber, totalQuestions, onAnswer }) => {
               ></div>
             </div>
           </div>
-          {question.image && (
-            <div className="mb-6 flex justify-center">
-              <img 
-                src={question.image} 
-                alt="Question visual" 
-                className="w-48 h-32 object-cover rounded-lg border border-gray-600"
-              />
-            </div>
-          )}
+
           <div className="flex items-center justify-center mb-6">
-            {question.emoji && <span className="text-4xl mr-4">{question.emoji}</span>}
+            {question.emoji && <span className="text-6xl mr-6">{question.emoji}</span>}
             <h2 className="text-2xl font-bold text-white" dangerouslySetInnerHTML={{ __html: question.question }}></h2>
           </div>
         </div>
