@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Question from './Question';
 import Results from './Results';
-import { commonQuestions } from '../data/questions';
+import { webDevQuestions } from '../data/questions';
 
 const Quiz = () => {
   const [questions, setQuestions] = useState([]);
@@ -33,7 +33,7 @@ const Quiz = () => {
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
-    const shuffledQuestions = [...commonQuestions]
+    const shuffledQuestions = [...webDevQuestions]
       .sort(() => Math.random() - 0.5)
       .slice(0, gameMode === 'blitz' ? 15 : 10);
     setQuestions(shuffledQuestions);
@@ -200,7 +200,6 @@ const Quiz = () => {
               </button>
             </div>
           </div>
-
           {/* Difficulty Selection */}
           <div className="mb-8">
             <h3 className="text-lg text-pink-400 mb-4 font-bold">SELECT DIFFICULTY</h3>
