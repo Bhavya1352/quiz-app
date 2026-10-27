@@ -45,6 +45,7 @@
     "tailwindcss": "^3.4.1"
   },
   "overrides": {
+    "body-parser": "2.4.0",
     "launch-editor": "2.14.2",
     "rollup": "2.80.0",
     "serialize-javascript": "7.0.3",
